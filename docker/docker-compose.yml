@@ -1,0 +1,33 @@
+services:
+  ros2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        ROS_DISTRO: humble
+    image: ros2_rk3568:humble
+    container_name: ros2_rk3568
+    restart: unless-stopped
+    network_mode: host
+    privileged: true
+    environment:
+      - ROS_DOMAIN_ID=0
+      - ROS_LOCALHOST_ONLY=0
+      - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+    volumes:
+      - ../src:/ros2_ws/src:rw
+      - /dev:/dev
+      - /etc/localtime:/etc/localtime:ro
+      - /run/udev:/run/udev:ro
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 3G
+    tty: true
+    stdin_open: true
+    command: bash
