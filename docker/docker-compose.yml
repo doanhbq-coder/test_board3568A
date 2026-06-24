@@ -14,11 +14,15 @@ services:
       - ROS_DOMAIN_ID=0
       - ROS_LOCALHOST_ONLY=0
       - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - LIBGL_ALWAYS_SOFTWARE=1
     volumes:
       - ../src:/ros2_ws/src:rw
       - /dev:/dev
       - /etc/localtime:/etc/localtime:ro
       - /run/udev:/run/udev:ro
+      - /tmp/.X11-unix:/tmp/.X11-unix
     logging:
       driver: json-file
       options:

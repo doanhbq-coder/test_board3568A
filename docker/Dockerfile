@@ -35,6 +35,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-${ROS_DISTRO}-teleop-twist-keyboard \
     ros-${ROS_DISTRO}-rosbridge-server \
     ros-${ROS_DISTRO}-diagnostic-updater \
+    ros-${ROS_DISTRO}-rviz2 \
+    && rm -rf /var/lib/apt/lists/*
+
+# ── Mesa software rendering (RK3568 không có GPU driver trong container)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    mesa-utils \
+    libgl1-mesa-dri \
+    libgl1-mesa-glx \
     && rm -rf /var/lib/apt/lists/*
 
 # ── Nav2 + SLAM ─────────────────────────────────────────────────────
