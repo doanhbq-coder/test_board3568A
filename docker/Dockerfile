@@ -23,24 +23,38 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     vim-tiny \
     && rm -rf /var/lib/apt/lists/*
 
-# ── ROS2 packages ───────────────────────────────────────────────────
+# ── ROS2 core packages (chắc chắn có trên arm64) ────────────────────
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-${ROS_DISTRO}-demo-nodes-cpp \
     ros-${ROS_DISTRO}-demo-nodes-py \
     ros-${ROS_DISTRO}-tf2-ros \
+    ros-${ROS_DISTRO}-tf2-geometry-msgs \
+    ros-${ROS_DISTRO}-xacro \
+    ros-${ROS_DISTRO}-robot-state-publisher \
+    ros-${ROS_DISTRO}-joint-state-publisher \
     ros-${ROS_DISTRO}-teleop-twist-keyboard \
-    ros-${ROS_DISTRO}-rplidar-ros \
-    ros-${ROS_DISTRO}-micro-ros-agent \
+    ros-${ROS_DISTRO}-rosbridge-server \
+    ros-${ROS_DISTRO}-diagnostic-updater \
+    && rm -rf /var/lib/apt/lists/*
+
+# ── Nav2 + SLAM ─────────────────────────────────────────────────────
+RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-${ROS_DISTRO}-navigation2 \
     ros-${ROS_DISTRO}-nav2-bringup \
     ros-${ROS_DISTRO}-slam-toolbox \
     ros-${ROS_DISTRO}-robot-localization \
-    ros-${ROS_DISTRO}-xacro \
-    ros-${ROS_DISTRO}-robot-state-publisher \
-    ros-${ROS_DISTRO}-joint-state-publisher \
-    ros-${ROS_DISTRO}-rosbridge-server \
-    ros-${ROS_DISTRO}-diagnostic-updater \
     && rm -rf /var/lib/apt/lists/*
+
+# ── Hardware drivers (cài được thì cài, không thì bỏ qua) ───────────
+RUN apt-get update && \
+    for pkg in \
+        ros-${ROS_DISTRO}-rplidar-ros \
+        ros-${ROS_DISTRO}-micro-ros-agent \
+    ; do \
+        apt-get install -y --no-install-recommends "$pkg" 2>/dev/null || \
+        echo "WARNING: $pkg not available on this arch, skipping"; \
+    done && \
+    rm -rf /var/lib/apt/lists/*
 
 # ── Python libs ──────────────────────────────────────────────────────
 RUN pip3 install --no-cache-dir \
